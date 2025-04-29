@@ -6,40 +6,39 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class User extends Model
+class Option extends Model
 {
     use HasFactory, SoftDeletes;
 
-    protected $table = 'users';
+    protected $table = 'options';
 
     protected $fillable = [
-        'uuid',
-        'name',
-        'email',
-        'password',
-        'apartment_number',
+        'question_id',
+        'text',
+        'votes_cache',
+        'created_by',
+        'updated_by',
     ];
 
     protected $casts = [
-        'uuid' => 'string',
         'created_at' => 'datetime',
         'updated_at' => 'datetime',
         'deleted_at' => 'datetime',
         'restored_at' => 'datetime',
     ];
 
-    public function roles()
+    public function question()
     {
-        return $this->belongsToMany(Role::class, 'user_roles');
+        return $this->belongsTo(Question::class);
     }
 
-    public function votingSessions()
+    public function createdBy()
     {
-        return $this->hasMany(VotingSession::class);
+        return $this->belongsTo(User::class, 'created_by');
     }
 
-    public function questions()
+    public function updatedBy()
     {
-        return $this->hasMany(Question::class, 'created_by');
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }
