@@ -4,20 +4,22 @@ namespace App\Http\Controllers;
 
 use App\Services\OptionService;
 use Illuminate\Http\Request;
+use App\Utils\ApiResponse;
 
 class OptionController extends Controller
 {
     protected $optionService;
+    protected $apiResponse;
 
-    public function __construct(OptionService $optionService)
+    public function __construct(OptionService $optionService, ApiResponse $apiResponse)
     {
         $this->optionService = $optionService;
+        $this->apiResponse = $apiResponse;
     }
 
     public function index()
     {
-        $options = $this->optionService->index();
-        return response()->json($options);
+        return $this->optionService->index();
     }
 
     public function store(Request $request)
@@ -28,20 +30,12 @@ class OptionController extends Controller
             'is_active' => 'nullable|boolean',
         ]);
 
-        $option = $this->optionService->store($data);
-
-        return response()->json($option, 201);
+        return $this->optionService->store($data);
     }
 
     public function show(string $id)
     {
-        $option = $this->optionService->show($id);
-
-        if (!$option) {
-            return response()->json(['message' => 'Option not found'], 404);
-        }
-
-        return response()->json($option);
+        return $this->optionService->show($id);
     }
 
     public function update(Request $request, string $id)
@@ -52,23 +46,11 @@ class OptionController extends Controller
             'is_active' => 'nullable|boolean',
         ]);
 
-        $option = $this->optionService->update($id, $data);
-
-        if (!$option) {
-            return response()->json(['message' => 'Option not found or not updated'], 404);
-        }
-
-        return response()->json(['message' => 'Option updated successfully']);
+        return $this->optionService->update($id, $data);
     }
 
     public function destroy(string $id)
     {
-        $deleted = $this->optionService->destroy($id);
-
-        if (!$deleted) {
-            return response()->json(['message' => 'Option not found'], 404);
-        }
-
-        return response()->json(['message' => 'Option deleted successfully']);
+        return $this->optionService->destroy($id);
     }
 }

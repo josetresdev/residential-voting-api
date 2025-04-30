@@ -18,7 +18,6 @@ return new class extends Migration
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
             $table->foreign('option_id')->references('id')->on('options')->onDelete('cascade');
             $table->timestamp('deleted_at')->nullable()->default(null);
-            $table->timestamp('restored_at')->nullable()->default(null);
             $table->timestamps(0);
             $table->unique(['user_id', 'question_id'], 'unique_vote');
         });

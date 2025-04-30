@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -30,15 +31,3 @@ Route::apiResource('password-resets', App\Http\Controllers\PasswordResetControll
 
 // Sessions
 Route::apiResource('sessions', App\Http\Controllers\SessionController::class);
-
-// Activity Logs
-Route::apiResource('activity-logs', App\Http\Controllers\ActivityLogController::class);
-
-// Cache
-Route::apiResource('cache', App\Http\Controllers\CacheController::class);
-
-// CacheLocks
-Route::apiResource('cache-locks', App\Http\Controllers\CacheLockController::class);
-
-// Jobs
-Route::apiResource('jobs', App\Http\Controllers\JobController::class);

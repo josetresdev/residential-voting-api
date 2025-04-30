@@ -16,8 +16,7 @@ class UserController extends Controller
 
     public function index()
     {
-        $users = $this->userService->index();
-        return response()->json($users);
+        return $this->userService->index();
     }
 
     public function store(Request $request)
@@ -26,17 +25,15 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8',
-            'roles' => 'array', // Los roles son opcionales
+            'roles' => 'nullable|array',
         ]);
-
-        $user = $this->userService->store($data);
-        return response()->json($user, 201);
+    
+        return $this->userService->store($data);
     }
 
     public function show(string $id)
     {
-        $user = $this->userService->show($id);
-        return response()->json($user);
+        return $this->userService->show($id);
     }
 
     public function update(Request $request, string $id)
@@ -48,13 +45,11 @@ class UserController extends Controller
             'roles' => 'array',
         ]);
 
-        $user = $this->userService->update($id, $data);
-        return response()->json($user);
+        return $this->userService->update($id, $data);
     }
 
     public function destroy(string $id)
     {
-        $this->userService->destroy($id);
-        return response()->json(['message' => 'User deleted successfully']);
+        return $this->userService->destroy($id);
     }
 }

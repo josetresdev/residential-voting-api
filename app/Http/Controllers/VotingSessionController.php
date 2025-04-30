@@ -14,47 +14,55 @@ class VotingSessionController extends Controller
         $this->votingSessionService = $votingSessionService;
     }
 
+    /**
+     * Obtener todas las sesiones de votación.
+     */
     public function index()
     {
-        $votingSessions = $this->votingSessionService->index();
-        return response()->json($votingSessions);
+        return $this->votingSessionService->index();
     }
 
+    /**
+     * Almacenar una nueva sesión de votación.
+     */
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'status' => 'required|in:open,closed',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:active,closed',
         ]);
-
-        $votingSession = $this->votingSessionService->store($data);
-        return response()->json($votingSession, 201);
+    
+        return $this->votingSessionService->store($data);
     }
 
+    /**
+     * Mostrar una sesión de votación específica.
+     */
     public function show(string $id)
     {
-        $votingSession = $this->votingSessionService->show($id);
-        return response()->json($votingSession);
+        return $this->votingSessionService->show($id);
     }
 
+    /**
+     * Actualizar una sesión de votación específica.
+     */
     public function update(Request $request, string $id)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'status' => 'required|in:open,closed',
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after:start_date',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:active,closed',
         ]);
 
-        $votingSession = $this->votingSessionService->update($id, $data);
-        return response()->json($votingSession);
+        return $this->votingSessionService->update($id, $data);
     }
 
+    /**
+     * Eliminar una sesión de votación específica.
+     */
     public function destroy(string $id)
     {
-        $this->votingSessionService->destroy($id);
-        return response()->json(['message' => 'Voting session deleted successfully']);
+        return $this->votingSessionService->destroy($id);
     }
 }

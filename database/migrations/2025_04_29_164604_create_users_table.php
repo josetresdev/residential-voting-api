@@ -16,8 +16,7 @@ return new class extends Migration
             $table->string('password', 255);
             $table->string('apartment_number', 20)->nullable();
             $table->timestamp('deleted_at')->nullable()->default(null);
-            $table->timestamp('restored_at')->nullable()->default(null);
-            $table->timestamps(0); // Esto agrega las columnas created_at y updated_at automáticamente
+            $table->timestamps(0);
         });
     }
 

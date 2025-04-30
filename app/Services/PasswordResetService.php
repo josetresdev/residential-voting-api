@@ -4,40 +4,67 @@ namespace App\Services;
 
 use App\Models\PasswordReset;
 use Illuminate\Support\Facades\DB;
+use App\Utils\ApiResponse;
 
 class PasswordResetService
 {
+    protected $apiResponse;
+
+    public function __construct(ApiResponse $apiResponse)
+    {
+        $this->apiResponse = $apiResponse;
+    }
+
     public function index()
     {
-        return PasswordReset::orderByDesc('created_at')->get();
+        $passwordResets = PasswordReset::orderByDesc('created_at')->get();
+        return $this->apiResponse->success($passwordResets);
     }
 
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
-            return PasswordReset::create($data);
+            $passwordReset = PasswordReset::create($data);
+            return $this->apiResponse->success($passwordReset, 'Password reset created successfully', 201);
         });
     }
 
     public function show(int $id)
     {
-        return PasswordReset::findOrFail($id);
+        $passwordReset = PasswordReset::find($id);
+
+        if (!$passwordReset) {
+            return $this->apiResponse->error('Password reset request not found', 404);
+        }
+
+        return $this->apiResponse->success($passwordReset);
     }
 
     public function update(int $id, array $data)
     {
         return DB::transaction(function () use ($id, $data) {
-            $passwordReset = PasswordReset::findOrFail($id);
+            $passwordReset = PasswordReset::find($id);
+
+            if (!$passwordReset) {
+                return $this->apiResponse->error('Password reset request not found or not updated', 404);
+            }
+
             $passwordReset->update($data);
-            return $passwordReset;
+            return $this->apiResponse->success($passwordReset, 'Password reset request updated successfully');
         });
     }
 
     public function destroy(int $id)
     {
         return DB::transaction(function () use ($id) {
-            $passwordReset = PasswordReset::findOrFail($id);
-            return $passwordReset->delete();
+            $passwordReset = PasswordReset::find($id);
+
+            if (!$passwordReset) {
+                return $this->apiResponse->error('Password reset request not found', 404);
+            }
+
+            $passwordReset->delete();
+            return $this->apiResponse->success(null, 'Password reset request deleted successfully', 204);
         });
     }
 }

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Services\VoteService;
+use Illuminate\Http\Request;
 
 class VoteController extends Controller
 {
@@ -14,11 +14,17 @@ class VoteController extends Controller
         $this->voteService = $voteService;
     }
 
+    /**
+     * Obtener todos los votos.
+     */
     public function index()
     {
-        return response()->json($this->voteService->index());
+        return $this->voteService->index();
     }
 
+    /**
+     * Almacenar un nuevo voto.
+     */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -26,19 +32,21 @@ class VoteController extends Controller
             'option_id' => 'required|exists:options,id',
             'voting_session_id' => 'required|exists:voting_sessions,id',
         ]);
-
-        $vote = $this->voteService->store($data);
-
-        return response()->json($vote, 201);
+    
+        return $this->voteService->store($data);
     }
 
+    /**
+     * Mostrar un voto específico.
+     */
     public function show(string $id)
     {
-        $vote = $this->voteService->show($id);
-
-        return response()->json($vote);
+        return $this->voteService->show($id);
     }
 
+    /**
+     * Actualizar un voto existente.
+     */
     public function update(Request $request, string $id)
     {
         $data = $request->validate([
@@ -47,15 +55,14 @@ class VoteController extends Controller
             'voting_session_id' => 'sometimes|exists:voting_sessions,id',
         ]);
 
-        $vote = $this->voteService->update($id, $data);
-
-        return response()->json($vote);
+        return $this->voteService->update($id, $data);
     }
 
+    /**
+     * Eliminar un voto específico.
+     */
     public function destroy(string $id)
     {
-        $this->voteService->destroy($id);
-
-        return response()->json(null, 204);
+        return $this->voteService->destroy($id);
     }
 }

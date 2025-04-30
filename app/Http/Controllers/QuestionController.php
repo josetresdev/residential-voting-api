@@ -16,8 +16,7 @@ class QuestionController extends Controller
 
     public function index()
     {
-        $questions = $this->questionService->index();
-        return response()->json($questions);
+        return $this->questionService->index();
     }
 
     public function store(Request $request)
@@ -28,19 +27,12 @@ class QuestionController extends Controller
             'quiz_id' => 'required|integer',
         ]);
 
-        $question = $this->questionService->store($validated);
-        return response()->json($question, 201);
+        return $this->questionService->store($validated);
     }
 
     public function show(string $id)
     {
-        $question = $this->questionService->show((int) $id);
-
-        if (!$question) {
-            return response()->json(['message' => 'Question not found'], 404);
-        }
-
-        return response()->json($question);
+        return $this->questionService->show((int) $id);
     }
 
     public function update(Request $request, string $id)
@@ -51,23 +43,11 @@ class QuestionController extends Controller
             'quiz_id' => 'required|integer',
         ]);
 
-        $updated = $this->questionService->update((int) $id, $validated);
-
-        if (!$updated) {
-            return response()->json(['message' => 'Question not found or not updated'], 404);
-        }
-
-        return response()->json(['message' => 'Question updated successfully']);
+        return $this->questionService->update((int) $id, $validated);
     }
 
     public function destroy(string $id)
     {
-        $deleted = $this->questionService->destroy((int) $id);
-
-        if (!$deleted) {
-            return response()->json(['message' => 'Question not found'], 404);
-        }
-
-        return response()->json(['message' => 'Question deleted successfully']);
+        return $this->questionService->destroy((int) $id);
     }
 }

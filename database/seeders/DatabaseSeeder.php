@@ -21,10 +21,6 @@ class DatabaseSeeder extends Seeder
             VotesSeeder::class,
             PasswordResetsSeeder::class,
             SessionsSeeder::class,
-            ActivityLogsSeeder::class,
-            CacheSeeder::class,
-            CacheLocksSeeder::class,
-            JobsSeeder::class,
         ]);
     }
 }

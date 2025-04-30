@@ -14,8 +14,7 @@ return new class extends Migration
             $table->string('title', 255);
             $table->text('description')->nullable();
             $table->enum('status', ['active', 'closed'])->default('active');
-            $table->timestamp('deleted_at')->nullable()->default(null);
-            $table->timestamp('restored_at')->nullable()->default(null);
+            $table->timestamp('deleted_at')->nullable();
             $table->timestamps(0);
         });
     }

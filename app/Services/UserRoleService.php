@@ -4,70 +4,67 @@ namespace App\Services;
 
 use App\Models\UserRole;
 use Illuminate\Support\Facades\DB;
+use App\Utils\ApiResponse;
 
 class UserRoleService
 {
-    /**
-     * Get a list of all user roles with relationships loaded.
-     *
-     * @return \Illuminate\Database\Eloquent\Collection
-     */
-    public function index()
+    protected $apiResponse;
+
+    public function __construct(ApiResponse $apiResponse)
     {
-        return UserRole::with(['user', 'role'])->orderByDesc('created_at')->get();
+        $this->apiResponse = $apiResponse;
     }
 
-    /**
-     * Store a new user role.
-     *
-     * @param array $data
-     * @return \App\Models\UserRole
-     */
+    public function index()
+    {
+        $userRoles = UserRole::with(['user', 'role'])->orderByDesc('created_at')->get();
+        return $this->apiResponse->success($userRoles);
+    }
+
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
-            return UserRole::create($data);
+            $userRole = UserRole::create($data);
+            return $this->apiResponse->success($userRole, 'User role created successfully', 201);
         });
     }
 
-    /**
-     * Show a specific user role by its ID.
-     *
-     * @param string $id
-     * @return \App\Models\UserRole
-     */
     public function show($id)
     {
-        return UserRole::with(['user', 'role'])->findOrFail($id);
+        $userRole = UserRole::with(['user', 'role'])->find($id);
+
+        if (!$userRole) {
+            return $this->apiResponse->error('User role not found', 404);
+        }
+
+        return $this->apiResponse->success($userRole);
     }
 
-    /**
-     * Update an existing user role.
-     *
-     * @param string $id
-     * @param array $data
-     * @return \App\Models\UserRole
-     */
     public function update($id, array $data)
     {
         return DB::transaction(function () use ($id, $data) {
-            $userRole = UserRole::findOrFail($id);
+            $userRole = UserRole::find($id);
+
+            if (!$userRole) {
+                return $this->apiResponse->error('User role not found or not updated', 404);
+            }
+
             $userRole->update($data);
-            return $userRole;
+            return $this->apiResponse->success($userRole, 'User role updated successfully');
         });
     }
 
-    /**
-     * Delete a user role.
-     *
-     * @param string $id
-     * @return bool|null
-     */
     public function destroy($id)
     {
         return DB::transaction(function () use ($id) {
-            $userRole = UserRole::findOrFail($id);
-            return $userRole->delete();
+            $userRole = UserRole::find($id);
+
+            if (!$userRole) {
+                return $this->apiResponse->error('User role not found', 404);
+            }
+
+            $userRole->delete();
+            return $this->apiResponse->success(null, 'User role deleted successfully', 204);
         });
     }
 }

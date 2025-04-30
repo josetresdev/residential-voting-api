@@ -16,12 +16,7 @@ class RoleController extends Controller
 
     public function index()
     {
-        return response()->json($this->roleService->index());
-    }
-
-    public function create()
-    {
-        return response()->json(['message' => 'Not implemented'], 501);
+        return $this->roleService->index();
     }
 
     public function store(Request $request)
@@ -30,21 +25,13 @@ class RoleController extends Controller
             'name' => 'required|string|unique:roles,name',
             'permissions' => 'nullable|array',
         ]);
-
-        $role = $this->roleService->store($validated);
-
-        return response()->json($role, 201);
+        
+        return $this->roleService->store($validated);
     }
 
     public function show(string $id)
     {
-        $role = $this->roleService->show((int) $id);
-
-        if (!$role) {
-            return response()->json(['message' => 'Role not found'], 404);
-        }
-
-        return response()->json($role);
+        return $this->roleService->show((int) $id);
     }
 
     public function update(Request $request, string $id)
@@ -54,23 +41,11 @@ class RoleController extends Controller
             'permissions' => 'nullable|array',
         ]);
 
-        $role = $this->roleService->update((int) $id, $validated);
-
-        if (!$role) {
-            return response()->json(['message' => 'Role not found or not updated'], 404);
-        }
-
-        return response()->json(['message' => 'Role updated successfully']);
+        return $this->roleService->update((int) $id, $validated);
     }
 
     public function destroy(string $id)
     {
-        $deleted = $this->roleService->destroy((int) $id);
-
-        if (!$deleted) {
-            return response()->json(['message' => 'Role not found'], 404);
-        }
-
-        return response()->json(['message' => 'Role deleted successfully']);
+        return $this->roleService->destroy((int) $id);
     }
 }
