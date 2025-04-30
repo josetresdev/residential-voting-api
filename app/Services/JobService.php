@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Job;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Database\Eloquent\ModelNotFoundException;
 
 class JobService
 {
@@ -19,12 +20,12 @@ class JobService
         });
     }
 
-    public function show(int $id)
+    public function show(int $id): Job
     {
         return Job::findOrFail($id);
     }
 
-    public function update(int $id, array $data)
+    public function update(int $id, array $data): Job
     {
         return DB::transaction(function () use ($id, $data) {
             $job = Job::findOrFail($id);
@@ -33,11 +34,11 @@ class JobService
         });
     }
 
-    public function destroy(int $id)
+    public function destroy(int $id): bool
     {
         return DB::transaction(function () use ($id) {
             $job = Job::findOrFail($id);
-            return $job->delete();
+            return (bool) $job->delete();
         });
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Services;
 
 use App\Models\User;
+use App\Utils\Pagination;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Hash;
 
@@ -10,16 +11,16 @@ class UserService
 {
     public function index()
     {
-        return User::with(['roles'])->get();
+        $query = User::with(['roles'])->orderByDesc('created_at');
+        return Pagination::paginate($query);
     }
 
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
-            $data['password'] = Hash::make($data['password']); // Asegurando que la contraseña esté hasheada
+            $data['password'] = Hash::make($data['password']);
             $user = User::create($data);
-            
-            // Asignando roles si es necesario
+
             if (isset($data['roles'])) {
                 $user->roles()->sync($data['roles']);
             }
@@ -38,14 +39,12 @@ class UserService
         return DB::transaction(function () use ($id, $data) {
             $user = User::findOrFail($id);
 
-            // Actualizando la contraseña solo si está presente
             if (isset($data['password'])) {
                 $data['password'] = Hash::make($data['password']);
             }
 
             $user->update($data);
 
-            // Actualizando roles si es necesario
             if (isset($data['roles'])) {
                 $user->roles()->sync($data['roles']);
             }
@@ -58,7 +57,7 @@ class UserService
     {
         return DB::transaction(function () use ($id) {
             $user = User::findOrFail($id);
-            $user->roles()->detach(); // Desasignando roles antes de borrar
+            $user->roles()->detach();
             return $user->delete();
         });
     }

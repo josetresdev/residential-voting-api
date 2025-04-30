@@ -21,12 +21,13 @@ class QuestionService
         });
     }
 
-    public function show($id)
+    public function show(int $id)
     {
-        return Question::with(['votingSession', 'createdBy', 'updatedBy'])->findOrFail($id);
+        return Question::with(['votingSession', 'createdBy', 'updatedBy'])
+            ->findOrFail($id);
     }
 
-    public function update($id, array $data)
+    public function update(int $id, array $data)
     {
         return DB::transaction(function () use ($id, $data) {
             $question = Question::findOrFail($id);
@@ -35,7 +36,7 @@ class QuestionService
         });
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         return DB::transaction(function () use ($id) {
             $question = Question::findOrFail($id);

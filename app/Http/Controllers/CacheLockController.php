@@ -2,63 +2,57 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CacheLockService;
 use Illuminate\Http\Request;
 
 class CacheLockController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $cacheLockService;
+
+    public function __construct(CacheLockService $cacheLockService)
+    {
+        $this->cacheLockService = $cacheLockService;
+    }
+
     public function index()
     {
-        //
+        $locks = $this->cacheLockService->index();
+        return response()->json($locks);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'key' => 'required|string|max:255',
+            'owner' => 'required|string|max:255',
+            'expiration' => 'required|integer',
+        ]);
+
+        $lock = $this->cacheLockService->store($data);
+        return response()->json($lock, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $lock = $this->cacheLockService->show($id);
+        return response()->json($lock);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $data = $request->validate([
+            'key' => 'string|max:255',
+            'owner' => 'string|max:255',
+            'expiration' => 'integer',
+        ]);
+
+        $lock = $this->cacheLockService->update($id, $data);
+        return response()->json($lock);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $this->cacheLockService->destroy($id);
+        return response()->json(['message' => 'Cache lock deleted successfully']);
     }
 }

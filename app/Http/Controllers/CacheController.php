@@ -2,63 +2,54 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\CacheService;
 use Illuminate\Http\Request;
 
 class CacheController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $cacheService;
+
+    public function __construct(CacheService $cacheService)
+    {
+        $this->cacheService = $cacheService;
+    }
+
     public function index()
     {
-        //
+        $cacheItems = $this->cacheService->index();
+        return response()->json($cacheItems);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'key' => 'required|string|max:255|unique:cache,key',
+            'value' => 'required|string',
+        ]);
+
+        $cacheItem = $this->cacheService->store($data);
+        return response()->json($cacheItem, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
+    public function show(string $key)
     {
-        //
+        $cacheItem = $this->cacheService->show($key);
+        return response()->json($cacheItem);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
+    public function update(Request $request, string $key)
     {
-        //
+        $data = $request->validate([
+            'value' => 'required|string',
+        ]);
+
+        $cacheItem = $this->cacheService->update($key, $data);
+        return response()->json($cacheItem);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
+    public function destroy(string $key)
     {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
+        $this->cacheService->destroy($key);
+        return response()->json(['message' => 'Cache item deleted successfully']);
     }
 }

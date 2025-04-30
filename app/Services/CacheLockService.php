@@ -2,40 +2,42 @@
 
 namespace App\Services;
 
-use Illuminate\Support\Facades\DB;
 use App\Models\CacheLock;
+use Illuminate\Support\Facades\DB;
 
 class CacheLockService
 {
     public function index()
     {
-        return DB::table('cache_locks')->orderBy('key')->get();
+        return CacheLock::orderBy('key')->get();
     }
 
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
-            return DB::table('cache_locks')->insert($data);
+            return CacheLock::create($data);
         });
     }
 
     public function show(string $key)
     {
-        return DB::table('cache_locks')->where('key', $key)->first();
+        return CacheLock::where('key', $key)->firstOrFail();
     }
 
     public function update(string $key, array $data)
     {
         return DB::transaction(function () use ($key, $data) {
-            DB::table('cache_locks')->where('key', $key)->update($data);
-            return DB::table('cache_locks')->where('key', $key)->first();
+            $lock = CacheLock::where('key', $key)->firstOrFail();
+            $lock->update($data);
+            return $lock;
         });
     }
 
     public function destroy(string $key)
     {
         return DB::transaction(function () use ($key) {
-            return DB::table('cache_locks')->where('key', $key)->delete();
+            $lock = CacheLock::where('key', $key)->firstOrFail();
+            return $lock->delete();
         });
     }
 }

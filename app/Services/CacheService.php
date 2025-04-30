@@ -3,7 +3,6 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\DB;
-use App\Models\Cache;
 
 class CacheService
 {
@@ -15,7 +14,8 @@ class CacheService
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
-            return DB::table('cache')->insert($data);
+            DB::table('cache')->insert($data);
+            return $data;
         });
     }
 
@@ -28,7 +28,7 @@ class CacheService
     {
         return DB::transaction(function () use ($key, $data) {
             DB::table('cache')->where('key', $key)->update($data);
-            return DB::table('cache')->where('key', $key)->first();
+            return DB::table('cache')->where('key', $key)->first();  // Devolvemos el elemento actualizado
         });
     }
 

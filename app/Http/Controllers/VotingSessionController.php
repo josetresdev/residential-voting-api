@@ -2,63 +2,59 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\VotingSessionService;
 use Illuminate\Http\Request;
 
 class VotingSessionController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $votingSessionService;
+
+    public function __construct(VotingSessionService $votingSessionService)
+    {
+        $this->votingSessionService = $votingSessionService;
+    }
+
     public function index()
     {
-        //
+        $votingSessions = $this->votingSessionService->index();
+        return response()->json($votingSessions);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'status' => 'required|in:open,closed',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+
+        $votingSession = $this->votingSessionService->store($data);
+        return response()->json($votingSession, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $votingSession = $this->votingSessionService->show($id);
+        return response()->json($votingSession);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $data = $request->validate([
+            'name' => 'required|string|max:255',
+            'status' => 'required|in:open,closed',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after:start_date',
+        ]);
+
+        $votingSession = $this->votingSessionService->update($id, $data);
+        return response()->json($votingSession);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $this->votingSessionService->destroy($id);
+        return response()->json(['message' => 'Voting session deleted successfully']);
     }
 }

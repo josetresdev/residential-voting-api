@@ -7,11 +7,22 @@ use Illuminate\Support\Facades\DB;
 
 class VoteService
 {
+    /**
+     * Obtiene todos los votos con sus relaciones.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function index()
     {
         return Vote::with(['user', 'question', 'option'])->get();
     }
 
+    /**
+     * Almacena un nuevo voto o actualiza uno existente.
+     *
+     * @param array $data
+     * @return \App\Models\Vote
+     */
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
@@ -31,11 +42,24 @@ class VoteService
         });
     }
 
+    /**
+     * Muestra un voto específico con sus relaciones.
+     *
+     * @param int $id
+     * @return \App\Models\Vote
+     */
     public function show($id)
     {
         return Vote::with(['user', 'question', 'option'])->findOrFail($id);
     }
 
+    /**
+     * Actualiza un voto específico.
+     *
+     * @param int $id
+     * @param array $data
+     * @return \App\Models\Vote
+     */
     public function update($id, array $data)
     {
         return DB::transaction(function () use ($id, $data) {
@@ -48,6 +72,12 @@ class VoteService
         });
     }
 
+    /**
+     * Elimina un voto específico.
+     *
+     * @param int $id
+     * @return bool|null
+     */
     public function destroy($id)
     {
         return DB::transaction(function () use ($id) {

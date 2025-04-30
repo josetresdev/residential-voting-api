@@ -2,63 +2,56 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\ActivityLogService;
 use Illuminate\Http\Request;
 
 class ActivityLogController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
+    protected $activityLogService;
+
+    public function __construct(ActivityLogService $activityLogService)
+    {
+        $this->activityLogService = $activityLogService;
+    }
+
     public function index()
     {
-        //
+        $logs = $this->activityLogService->index();
+        return response()->json($logs);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
-    }
-
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
-        //
+        $data = $request->validate([
+            'user_id' => 'required|exists:users,id',
+            'action' => 'required|string|max:255',
+            'details' => 'nullable|string',
+        ]);
+
+        $log = $this->activityLogService->store($data);
+        return response()->json($log, 201);
     }
 
-    /**
-     * Display the specified resource.
-     */
     public function show(string $id)
     {
-        //
+        $log = $this->activityLogService->show($id);
+        return response()->json($log);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $data = $request->validate([
+            'action' => 'string|max:255',
+            'details' => 'nullable|string',
+        ]);
+
+        $log = $this->activityLogService->update($id, $data);
+        return response()->json($log);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $this->activityLogService->destroy($id);
+        return response()->json(['message' => 'Activity log deleted successfully']);
     }
 }

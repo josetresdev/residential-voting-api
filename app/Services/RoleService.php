@@ -19,12 +19,12 @@ class RoleService
         });
     }
 
-    public function show($id)
+    public function show(int $id)
     {
         return Role::findOrFail($id);
     }
 
-    public function update($id, array $data)
+    public function update(int $id, array $data)
     {
         return DB::transaction(function () use ($id, $data) {
             $role = Role::findOrFail($id);
@@ -33,7 +33,7 @@ class RoleService
         });
     }
 
-    public function destroy($id)
+    public function destroy(int $id)
     {
         return DB::transaction(function () use ($id) {
             $role = Role::findOrFail($id);

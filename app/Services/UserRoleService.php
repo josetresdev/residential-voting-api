@@ -7,11 +7,22 @@ use Illuminate\Support\Facades\DB;
 
 class UserRoleService
 {
+    /**
+     * Get a list of all user roles with relationships loaded.
+     *
+     * @return \Illuminate\Database\Eloquent\Collection
+     */
     public function index()
     {
-        return UserRole::with(['user', 'role'])->get();
+        return UserRole::with(['user', 'role'])->orderByDesc('created_at')->get();
     }
 
+    /**
+     * Store a new user role.
+     *
+     * @param array $data
+     * @return \App\Models\UserRole
+     */
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
@@ -19,11 +30,24 @@ class UserRoleService
         });
     }
 
+    /**
+     * Show a specific user role by its ID.
+     *
+     * @param string $id
+     * @return \App\Models\UserRole
+     */
     public function show($id)
     {
         return UserRole::with(['user', 'role'])->findOrFail($id);
     }
 
+    /**
+     * Update an existing user role.
+     *
+     * @param string $id
+     * @param array $data
+     * @return \App\Models\UserRole
+     */
     public function update($id, array $data)
     {
         return DB::transaction(function () use ($id, $data) {
@@ -33,6 +57,12 @@ class UserRoleService
         });
     }
 
+    /**
+     * Delete a user role.
+     *
+     * @param string $id
+     * @return bool|null
+     */
     public function destroy($id)
     {
         return DB::transaction(function () use ($id) {

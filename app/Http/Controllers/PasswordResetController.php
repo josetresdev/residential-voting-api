@@ -2,24 +2,25 @@
 
 namespace App\Http\Controllers;
 
+use App\Services\PasswordResetService;
 use Illuminate\Http\Request;
 
 class PasswordResetController extends Controller
 {
+    protected $passwordResetService;
+
+    public function __construct(PasswordResetService $passwordResetService)
+    {
+        $this->passwordResetService = $passwordResetService;
+    }
+
     /**
      * Display a listing of the resource.
      */
     public function index()
     {
-        //
-    }
-
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
-    {
-        //
+        $passwordResets = $this->passwordResetService->index();
+        return response()->json($passwordResets);
     }
 
     /**
@@ -27,7 +28,13 @@ class PasswordResetController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        // Validar datos
+        $data = $request->validate([
+            'email' => 'required|email',
+        ]);
+
+        $passwordReset = $this->passwordResetService->store($data);
+        return response()->json($passwordReset, 201);
     }
 
     /**
@@ -35,30 +42,39 @@ class PasswordResetController extends Controller
      */
     public function show(string $id)
     {
-        //
+        $passwordReset = $this->passwordResetService->show((int) $id);
+
+        if (!$passwordReset) {
+            return response()->json(['message' => 'Password reset request not found'], 404);
+        }
+
+        return response()->json($passwordReset);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
     public function update(Request $request, string $id)
     {
-        //
+        $data = $request->validate([
+            'email' => 'required|email',
+            'token' => 'required|string',
+        ]);
+
+        $updated = $this->passwordResetService->update((int) $id, $data);
+
+        if (!$updated) {
+            return response()->json(['message' => 'Password reset request not found or not updated'], 404);
+        }
+
+        return response()->json(['message' => 'Password reset updated successfully']);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
     public function destroy(string $id)
     {
-        //
+        $deleted = $this->passwordResetService->destroy((int) $id);
+
+        if (!$deleted) {
+            return response()->json(['message' => 'Password reset request not found'], 404);
+        }
+
+        return response()->json(['message' => 'Password reset request deleted successfully']);
     }
 }

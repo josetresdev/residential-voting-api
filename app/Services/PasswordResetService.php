@@ -19,24 +19,24 @@ class PasswordResetService
         });
     }
 
-    public function show(string $email)
+    public function show(int $id)
     {
-        return PasswordReset::where('email', $email)->firstOrFail();
+        return PasswordReset::findOrFail($id);
     }
 
-    public function update(string $email, array $data)
+    public function update(int $id, array $data)
     {
-        return DB::transaction(function () use ($email, $data) {
-            $passwordReset = PasswordReset::where('email', $email)->firstOrFail();
+        return DB::transaction(function () use ($id, $data) {
+            $passwordReset = PasswordReset::findOrFail($id);
             $passwordReset->update($data);
             return $passwordReset;
         });
     }
 
-    public function destroy(string $email)
+    public function destroy(int $id)
     {
-        return DB::transaction(function () use ($email) {
-            $passwordReset = PasswordReset::where('email', $email)->firstOrFail();
+        return DB::transaction(function () use ($id) {
+            $passwordReset = PasswordReset::findOrFail($id);
             return $passwordReset->delete();
         });
     }

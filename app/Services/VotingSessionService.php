@@ -7,11 +7,17 @@ use Illuminate\Support\Facades\DB;
 
 class VotingSessionService
 {
+    /**
+     * Get all voting sessions.
+     */
     public function index()
     {
-        return VotingSession::all();
+        return VotingSession::with(['questions'])->orderByDesc('created_at')->get();
     }
 
+    /**
+     * Store a newly created voting session.
+     */
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
@@ -20,11 +26,17 @@ class VotingSessionService
         });
     }
 
+    /**
+     * Display the specified voting session with related questions.
+     */
     public function show($id)
     {
         return VotingSession::with(['questions'])->findOrFail($id);
     }
 
+    /**
+     * Update the specified voting session.
+     */
     public function update($id, array $data)
     {
         return DB::transaction(function () use ($id, $data) {
@@ -37,6 +49,9 @@ class VotingSessionService
         });
     }
 
+    /**
+     * Remove the specified voting session.
+     */
     public function destroy($id)
     {
         return DB::transaction(function () use ($id) {
