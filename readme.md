@@ -13,11 +13,96 @@ Este es un sistema de votaciones web destinado a propietarios de un conjunto res
 - **Interfaz de administración:** Los administradores pueden gestionar preguntas, opciones y usuarios.
 - **Interfaz de usuario:** Los propietarios pueden votar de forma sencilla y ver los resultados.
 
+## Arquitectura del sistema
+
+El sistema sigue una arquitectura basada en **API RESTful**, utilizando **Laravel 11** en el backend y **Vue.js** en el frontend. El backend es responsable de gestionar los recursos y las rutas, mientras que el frontend consume esas rutas para mostrar la información al usuario. Aquí se detalla la estructura básica de la arquitectura:
+
+### Rutas y controladores
+
+El sistema utiliza rutas para gestionar la interacción entre el cliente y el servidor. Estas rutas están protegidas por **middleware** para asegurar que solo los usuarios autenticados puedan acceder a ciertos recursos.
+
+#### Ejemplos de rutas importantes
+
+- **POST** `/api/login` → Controlador `AuthController@login`
+- **POST** `/api/register` → Controlador `AuthController@register`
+- **GET** `/api/questions` → Controlador `QuestionController@index`
+- **POST** `/api/votes` → Controlador `VoteController@store`
+  
+Las rutas del sistema están definidas principalmente en `routes/api.php`, y cada ruta se asigna a un controlador correspondiente.
+
+### Controladores
+
+Los controladores son responsables de manejar la lógica del negocio relacionada con las solicitudes HTTP. En este sistema, los controladores principales incluyen:
+
+- **AuthController**: Maneja la autenticación de usuarios y la creación de tokens.
+- **QuestionController**: Gestiona la creación y visualización de preguntas de votación.
+- **OptionController**: Gestiona las opciones disponibles para cada pregunta.
+- **VoteController**: Maneja la emisión de votos por parte de los propietarios.
+  
+### Modelos
+
+Cada recurso en el sistema (Usuarios, Preguntas, Opciones, Votos) está representado por un modelo que interactúa con la base de datos a través de **Eloquent ORM**. Sin embargo, para permitir consultas más complejas y optimizar el rendimiento, se puede utilizar **Query Builder**. Esto es especialmente útil cuando se requieren filtros dinámicos, búsquedas complejas o se necesitan realizar consultas que no se ajustan a la estructura estándar de Eloquent.
+
+**Query Builder** proporciona una forma fluida de construir consultas SQL de manera segura, sin la necesidad de escribir SQL directamente. Esto facilita la personalización y eficiencia de las consultas, permitiendo a los desarrolladores realizar búsquedas más específicas y optimizadas según las necesidades del cliente.
+
+### Ejemplo de uso de Query Builder
+
+Supongamos que necesitamos obtener todas las preguntas activas que fueron creadas después de una fecha específica. Usando **Query Builder** de Laravel, podemos hacer lo siguiente:
+
+```php
+use Illuminate\Support\Facades\DB;
+
+$questions = DB::table('questions')
+    ->where('status', 'active')
+    ->where('created_at', '>', '2025-01-01')
+    ->get();
+
+- `User`: Representa los propietarios que pueden votar.
+- `Question`: Representa las preguntas de votación.
+- `Option`: Representa las opciones disponibles para cada pregunta.
+- `Vote`: Representa los votos emitidos.
+  
+### Middleware y Autenticación
+
+El sistema utiliza **JWT-Auth** para la autenticación a través de **Bearer Token**. Las rutas protegidas requieren un token válido, que se pasa en los encabezados de las solicitudes HTTP. El middleware `auth:api` protege las rutas restringidas, garantizando que solo los usuarios con un token válido puedan acceder a ellas.
+
+La autenticación se maneja de la siguiente manera:
+
+- El usuario se registra o inicia sesión a través de las rutas `/api/register` y `/api/login`.
+- Tras la autenticación exitosa, el servidor devuelve un **token** JWT, que se debe incluir en las solicitudes subsecuentes.
+- Este token se pasa en la cabecera de las solicitudes como `Authorization: Bearer {token}`.
+
+### Respuestas Estandarizadas
+
+Todas las respuestas de la API siguen un formato estandarizado para facilitar el manejo en el frontend y garantizar una comunicación clara con el cliente. Un ejemplo de respuesta es el siguiente:
+
+```json
+{
+    "status": "success",
+    "message": "Success",
+    "data": {
+        "current_page": 1,
+        "data": [
+            {
+                "id": 1,
+                "uuid": "2f492897-bafa-4d13-be75-e51b85f658d4",
+                "title": "Presidencia del condominio",
+                "description": null,
+                "status": "active",
+                "created_at": "2025-05-01T15:04:34.000000Z",
+                "updated_at": "2025-05-01T15:04:34.000000Z"
+            }
+        ],
+        "code": 200
+    }
+}
+```json
+
 ## Tecnologías
 
 - **Backend:** Laravel 11
-- **Frontend:** Vue.js
-- **Base de datos:** MySQL / SQLite
+- **Frontend:** Vue.js (v3.2.13)
+- **Base de datos:** MySQL
 - **Control de versiones:** Git y GitHub
 
 ## Requisitos
@@ -27,7 +112,7 @@ Antes de ejecutar el proyecto, asegúrate de tener instalados los siguientes pro
 - **PHP 8.2 o superior**
 - **Composer** para gestionar las dependencias de PHP
 - **Node.js** y **npm** para gestionar las dependencias de frontend
-- **MySQL** o **SQLite** para la base de datos
+- **MySQL** para la base de datos
 
 ## Instalación
 
@@ -73,6 +158,10 @@ Si estás utilizando MySQL o SQLite, ejecuta las migraciones para crear las tabl
 php artisan migrate
 ```
 
+```bash
+php artisan db:seed
+```
+
 ### 6. Instalar dependencias de Node.js
 
 Si tu proyecto tiene frontend con Vue.js, instala las dependencias de Node.js:
@@ -98,7 +187,15 @@ Para ejecutar el servidor de desarrollo de Laravel, usa el siguiente comando:
 php artisan serve
 ```
 
-Esto debería poner la API disponible en `http://localhost:8000`.
+Esto debería poner la API disponible en `http://localhost:8000/api`.
+
+## Frontend
+
+Este es el **Backend** de la aplicación. El **Frontend** correspondiente a este sistema de votaciones está disponible en el siguiente repositorio:
+
+[**residential-voting-frontend**](https://github.com/josetresdev/residential-voting-frontend)
+
+Este repositorio está desarrollado en **Vue.js** y se comunica con la API de este backend para gestionar la votación, usuarios y resultados en tiempo real.
 
 ## Contribuciones
 
@@ -113,6 +210,10 @@ Las contribuciones son bienvenidas. Si deseas colaborar en el proyecto, sigue es
 
 Este proyecto está licenciado bajo la **MIT License**. Consulta el archivo `LICENSE` para más detalles.
 
-## Contacto
+## Autor
 
-Si tienes alguna pregunta o sugerencia, no dudes en contactarme a través de correo electrónico: [josetrespalaciosbedoya@gmail.com](mailto:josetrespalaciosbedoya@gmail.com)
+Este proyecto fue desarrollado por **Jose Trespalacios**. Puedes contactarme a través del correo electrónico: [josetrespalaciosbedoya@gmail.com](mailto:josetrespalaciosbedoya@gmail.com).
+
+## Desarrollador responsable
+
+El desarrollo y mantenimiento de este sistema está bajo la responsabilidad de **Jose Trespalacios**. Cualquier contribución, mejora o reporte de errores debe ser dirigida a la misma dirección de contacto o a través del repositorio en GitHub.
