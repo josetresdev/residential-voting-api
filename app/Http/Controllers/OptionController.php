@@ -4,17 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Services\OptionService;
 use Illuminate\Http\Request;
-use App\Utils\ApiResponse;
 
 class OptionController extends Controller
 {
-    protected $optionService;
-    protected $apiResponse;
+    protected OptionService $optionService;
 
-    public function __construct(OptionService $optionService, ApiResponse $apiResponse)
+    public function __construct(OptionService $optionService)
     {
         $this->optionService = $optionService;
-        $this->apiResponse = $apiResponse;
     }
 
     public function index()
@@ -25,9 +22,8 @@ class OptionController extends Controller
     public function store(Request $request)
     {
         $data = $request->validate([
-            'name' => 'required|string|max:255',
-            'value' => 'required|string',
-            'is_active' => 'nullable|boolean',
+            'question_id' => 'required|exists:questions,id',
+            'text' => 'required|string|max:255',
         ]);
 
         return $this->optionService->store($data);
@@ -41,9 +37,8 @@ class OptionController extends Controller
     public function update(Request $request, string $id)
     {
         $data = $request->validate([
-            'name' => 'string|max:255',
-            'value' => 'string',
-            'is_active' => 'nullable|boolean',
+            'text' => 'sometimes|string|max:255',
+            'question_id' => 'sometimes|exists:questions,id',
         ]);
 
         return $this->optionService->update($id, $data);

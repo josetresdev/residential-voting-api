@@ -15,7 +15,7 @@ class Vote extends Model
     protected $fillable = [
         'uuid',
         'user_id',
-        'question_id',
+        'voting_session_id', // Corregido aquí
         'option_id',
     ];
 
@@ -26,14 +26,15 @@ class Vote extends Model
         'deleted_at' => 'datetime',
     ];
 
+    // Relaciones
     public function user()
     {
         return $this->belongsTo(User::class);
     }
 
-    public function question()
+    public function votingSession()
     {
-        return $this->belongsTo(Question::class);
+        return $this->belongsTo(VotingSession::class); // Corregido aquí
     }
 
     public function option()

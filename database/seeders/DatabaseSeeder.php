@@ -19,8 +19,6 @@ class DatabaseSeeder extends Seeder
             QuestionsTableSeeder::class,
             OptionsSeeder::class,
             VotesSeeder::class,
-            PasswordResetsSeeder::class,
-            SessionsSeeder::class,
         ]);
     }
 }

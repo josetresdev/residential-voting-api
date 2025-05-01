@@ -18,9 +18,9 @@ return new class extends Migration
             $table->foreign('question_id')->references('id')->on('questions')->onDelete('cascade');
             $table->foreign('created_by')->references('id')->on('users')->onDelete('set null');
             $table->foreign('updated_by')->references('id')->on('users')->onDelete('set null');
-            $table->timestamp('deleted_at')->nullable()->default(null);
+            $table->softDeletes();
             $table->timestamp('restored_at')->nullable()->default(null);
-            $table->timestamps(0);
+            $table->timestamps();
         });
     }
 

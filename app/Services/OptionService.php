@@ -3,12 +3,14 @@
 namespace App\Services;
 
 use App\Models\Option;
-use Illuminate\Support\Facades\DB;
 use App\Utils\ApiResponse;
+use App\Utils\Pagination;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 
 class OptionService
 {
-    protected $apiResponse;
+    protected ApiResponse $apiResponse;
 
     public function __construct(ApiResponse $apiResponse)
     {
@@ -17,54 +19,55 @@ class OptionService
 
     public function index()
     {
-        $options = Option::orderByDesc('created_at')->get();
+        $query = Option::with(['question', 'createdBy', 'updatedBy'])
+                       ->orderByDesc('created_at');
+
+        $options = Pagination::paginate($query);
+
         return $this->apiResponse->success($options);
     }
 
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
+            $data['created_by'] = Auth::id();
+            $data['updated_by'] = Auth::id();
+
             $option = Option::create($data);
-            return $this->apiResponse->success($option, 'Option created successfully', 201);
+
+            return $this->apiResponse->success($option, 'Opción creada correctamente.', 201);
         });
     }
 
-    public function show(int $id)
+    public function show(string $id)
     {
-        $option = Option::find($id);
+        $option = Option::with(['question', 'createdBy', 'updatedBy'])->find($id);
 
         if (!$option) {
-            return $this->apiResponse->error('Option not found', 404);
+            return $this->apiResponse->error('Opción no encontrada', 404);
         }
 
         return $this->apiResponse->success($option);
     }
 
-    public function update(int $id, array $data)
+    public function update(string $id, array $data)
     {
         return DB::transaction(function () use ($id, $data) {
-            $option = Option::find($id);
-
-            if (!$option) {
-                return $this->apiResponse->error('Option not found or not updated', 404);
-            }
-
+            $option = Option::findOrFail($id);
+            $data['updated_by'] = Auth::id();
             $option->update($data);
-            return $this->apiResponse->success($option, 'Option updated successfully');
+
+            return $this->apiResponse->success($option, 'Opción actualizada correctamente.');
         });
     }
 
-    public function destroy(int $id)
+    public function destroy(string $id)
     {
         return DB::transaction(function () use ($id) {
-            $option = Option::find($id);
-
-            if (!$option) {
-                return $this->apiResponse->error('Option not found', 404);
-            }
-
+            $option = Option::findOrFail($id);
             $option->delete();
-            return $this->apiResponse->success(null, 'Option deleted successfully', 204);
+
+            return $this->apiResponse->success(null, 'Opción eliminada correctamente.', 200);
         });
     }
 }

@@ -3,10 +3,10 @@
 namespace App\Services;
 
 use App\Models\Vote;
-use Illuminate\Support\Facades\DB;
 use App\Utils\ApiResponse;
-use Illuminate\Support\Str;
 use App\Utils\Pagination;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Str;
 
 class VoteService
 {
@@ -17,42 +17,35 @@ class VoteService
         $this->apiResponse = $apiResponse;
     }
 
-    /**
-     * Obtener todos los votos con paginación.
-     */
     public function index()
     {
-        $query = Vote::orderByDesc('created_at')->with(['user', 'option', 'votingSession']);
+        $query = Vote::with(['user', 'option', 'votingSession'])->orderByDesc('created_at');
         $votes = Pagination::paginate($query);
         return $this->apiResponse->success($votes);
     }
 
-    /**
-     * Almacenar un nuevo voto o actualizar uno existente.
-     */
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
+            // Verificamos si el voto ya existe para el usuario en esa sesión de votación
             $existingVote = Vote::where('user_id', $data['user_id'])
-                ->where('voting_session_id', $data['voting_session_id'])
+                ->where('voting_session_id', $data['voting_session_id']) // Se cambió a 'voting_session_id'
                 ->first();
 
             if ($existingVote) {
-                // Si ya existe un voto, actualizarlo
+                // Si ya existe el voto, lo actualizamos con la nueva opción
                 $existingVote->update(['option_id' => $data['option_id']]);
                 return $this->apiResponse->success($existingVote, 'Vote updated successfully');
-            } else {
-                // Si no existe, crear un nuevo voto
-                $data['uuid'] = Str::uuid()->toString();
-                $vote = Vote::create($data);
-                return $this->apiResponse->success($vote, 'Vote created successfully', 201);
             }
+
+            // Si el voto no existe, lo creamos nuevo
+            $data['uuid'] = Str::uuid()->toString(); // Generamos un UUID único
+            $vote = Vote::create($data); // Creamos el voto en la base de datos
+
+            return $this->apiResponse->success($vote, 'Vote created successfully', 201); // Retornamos la respuesta con el voto creado
         });
     }
 
-    /**
-     * Mostrar un voto específico.
-     */
     public function show($id)
     {
         $vote = Vote::with(['user', 'option', 'votingSession'])->find($id);
@@ -64,29 +57,26 @@ class VoteService
         return $this->apiResponse->success($vote);
     }
 
-    /**
-     * Actualizar un voto existente.
-     */
     public function update($id, array $data)
     {
         return DB::transaction(function () use ($id, $data) {
+            // Buscar voto existente
             $vote = Vote::findOrFail($id);
 
-            // Actualizar los datos del voto
+            // Actualizamos los datos del voto
             $vote->update($data);
 
             return $this->apiResponse->success($vote, 'Vote updated successfully');
         });
     }
 
-    /**
-     * Eliminar un voto.
-     */
     public function destroy($id)
     {
         return DB::transaction(function () use ($id) {
+            // Buscar el voto por ID y eliminarlo
             $vote = Vote::findOrFail($id);
             $vote->delete();
+
             return $this->apiResponse->success(null, 'Vote deleted successfully', 200);
         });
     }

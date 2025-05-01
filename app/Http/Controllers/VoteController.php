@@ -14,53 +14,40 @@ class VoteController extends Controller
         $this->voteService = $voteService;
     }
 
-    /**
-     * Obtener todos los votos.
-     */
     public function index()
     {
         return $this->voteService->index();
     }
 
-    /**
-     * Almacenar un nuevo voto.
-     */
     public function store(Request $request)
     {
+        // Validación ajustada para 'voting_session_id' y otros campos
         $data = $request->validate([
             'user_id' => 'required|exists:users,id',
             'option_id' => 'required|exists:options,id',
-            'voting_session_id' => 'required|exists:voting_sessions,id',
+            'voting_session_id' => 'required|exists:voting_sessions,id', // Corregido aquí
         ]);
     
         return $this->voteService->store($data);
     }
 
-    /**
-     * Mostrar un voto específico.
-     */
     public function show(string $id)
     {
         return $this->voteService->show($id);
     }
 
-    /**
-     * Actualizar un voto existente.
-     */
     public function update(Request $request, string $id)
     {
+        // Validación ajustada para 'voting_session_id'
         $data = $request->validate([
             'user_id' => 'sometimes|exists:users,id',
             'option_id' => 'sometimes|exists:options,id',
-            'voting_session_id' => 'sometimes|exists:voting_sessions,id',
+            'voting_session_id' => 'sometimes|exists:voting_sessions,id', // Corregido aquí
         ]);
 
         return $this->voteService->update($id, $data);
     }
 
-    /**
-     * Eliminar un voto específico.
-     */
     public function destroy(string $id)
     {
         return $this->voteService->destroy($id);

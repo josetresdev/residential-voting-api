@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Services\QuestionService;
 use Illuminate\Http\Request;
+use App\Services\QuestionService;
 
 class QuestionController extends Controller
 {
@@ -21,13 +21,17 @@ class QuestionController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
-            'question_text' => 'required|string',
-            'question_type' => 'required|string',
-            'quiz_id' => 'required|integer',
+        $data = $request->validate([
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'required|in:active,inactive',
+            'voting_session_id' => 'nullable|exists:voting_sessions,id',
+            'closes_at' => 'nullable|date',
+            'created_by' => 'nullable|exists:users,id',
+            'updated_by' => 'nullable|exists:users,id',
         ]);
 
-        return $this->questionService->store($validated);
+        return $this->questionService->store($data);
     }
 
     public function show(string $id)
@@ -37,13 +41,16 @@ class QuestionController extends Controller
 
     public function update(Request $request, string $id)
     {
-        $validated = $request->validate([
-            'question_text' => 'required|string',
-            'question_type' => 'required|string',
-            'quiz_id' => 'required|integer',
+        $data = $request->validate([
+            'title' => 'sometimes|required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'sometimes|required|in:active,inactive',
+            'voting_session_id' => 'nullable|exists:voting_sessions,id',
+            'closes_at' => 'nullable|date',
+            'updated_by' => 'nullable|exists:users,id',
         ]);
 
-        return $this->questionService->update((int) $id, $validated);
+        return $this->questionService->update((int) $id, $data);
     }
 
     public function destroy(string $id)
