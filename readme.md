@@ -186,6 +186,12 @@ Este es el **Backend** de la aplicación. El **Frontend** correspondiente a este
 
 Este repositorio está desarrollado en **Vue.js** y se comunica con la API de este backend para gestionar la votación, usuarios y resultados en tiempo real.
 
+### Colección de Postman
+
+La colección de Postman para interactuar con la API se encuentra en el archivo `resources/collections/VotingAPICollection.json`. Este archivo contiene todas las rutas y métodos disponibles en el sistema, lo que facilita la prueba y exploración de la API.
+
+Puedes importar esta colección directamente en Postman para realizar pruebas de manera rápida y efectiva.
+
 ## Contribuciones
 
 Las contribuciones son bienvenidas. Si deseas colaborar en el proyecto, sigue estos pasos:
