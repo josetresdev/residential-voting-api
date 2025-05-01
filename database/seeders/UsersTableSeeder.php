@@ -62,7 +62,7 @@ class UsersTableSeeder extends Seeder
         User::create([
             'uuid' => 'e5b8a923-52f1-4d7f-b2cf-774b0db551f7',
             'name' => 'Jose Trespalacios',
-            'email' => 'josetrespalaciso@gmail.com',
+            'email' => 'josetrespalacios@gmail.com',
             'password' => Hash::make('D3v3l0p3r**'),
             'apartment_number' => 'G707'
         ]);
