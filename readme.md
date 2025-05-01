@@ -13,7 +13,6 @@ Este es un sistema de votaciones web destinado a propietarios de un conjunto res
 - **Interfaz de administración (backend):** Los administradores pueden gestionar preguntas, opciones, resultados y usuarios desde el backend.
 - **Protección de rutas:** Acceso restringido a las funcionalidades mediante autenticación con Bearer tokens (JWT).
 
-
 ## Arquitectura del sistema
 
 El sistema sigue una arquitectura basada en **API RESTful**, utilizando **Laravel 11** en el backend y **Vue.js** en el frontend. El backend es responsable de gestionar los recursos y las rutas, mientras que el frontend consume esas rutas para mostrar la información al usuario. Aquí se detalla la estructura básica de la arquitectura:
@@ -42,13 +41,11 @@ Los controladores son responsables de manejar la lógica del negocio relacionada
   
 ### Modelos
 
-Cada recurso en el sistema (Usuarios, Preguntas, Opciones, Votos) está representado por un modelo que interactúa con la base de datos a través de **Eloquent ORM**. Sin embargo, para permitir consultas más complejas y optimizar el rendimiento, se puede utilizar **Query Builder**. Esto es especialmente útil cuando se requieren filtros dinámicos, búsquedas complejas o se necesitan realizar consultas que no se ajustan a la estructura estándar de Eloquent.
-
-**Query Builder** proporciona una forma fluida de construir consultas SQL de manera segura, sin la necesidad de escribir SQL directamente. Esto facilita la personalización y eficiencia de las consultas, permitiendo a los desarrolladores realizar búsquedas más específicas y optimizadas según las necesidades del cliente.
+Los recursos (Usuarios, Preguntas, Opciones, Votos) se gestionan mediante **Eloquent ORM**. Para consultas complejas o optimización de rendimiento, se puede utilizar **Query Builder**, permitiendo consultas más dinámicas y eficientes sin escribir SQL directamente.
 
 ### Ejemplo de uso de Query Builder
 
-Supongamos que necesitamos obtener todas las preguntas activas que fueron creadas después de una fecha específica. Usando **Query Builder** de Laravel, podemos hacer lo siguiente:
+Para obtener todas las preguntas activas creadas después de una fecha específica, podemos usar **Query Builder** de esta manera:
 
 ```php
 use Illuminate\Support\Facades\DB;
@@ -57,25 +54,17 @@ $questions = DB::table('questions')
     ->where('status', 'active')
     ->where('created_at', '>', '2025-01-01')
     ->get();
-
-- `User`: Representa los propietarios que pueden votar.
-- `Question`: Representa las preguntas de votación.
-- `Option`: Representa las opciones disponibles para cada pregunta.
-- `Vote`: Representa los votos emitidos.
   
-### Middleware y Autenticación
+### Middleware y autenticación
 
-El sistema utiliza **JWT-Auth** para la autenticación a través de **Bearer Token**. Las rutas protegidas requieren un token válido, que se pasa en los encabezados de las solicitudes HTTP. El middleware `auth:api` protege las rutas restringidas, garantizando que solo los usuarios con un token válido puedan acceder a ellas.
+El sistema usa **JWT-Auth** con **Bearer Token** para la autenticación. Las rutas protegidas requieren un token válido en los encabezados HTTP. El middleware `auth:api` asegura que solo los usuarios autenticados puedan acceder a ellas.
 
-La autenticación se maneja de la siguiente manera:
+- El usuario se registra o inicia sesión en `/api/register` o `/api/login`.
+- Tras la autenticación, se devuelve un **token** JWT, que se incluye en las solicitudes subsecuentes como `Authorization: Bearer {token}`.
 
-- El usuario se registra o inicia sesión a través de las rutas `/api/register` y `/api/login`.
-- Tras la autenticación exitosa, el servidor devuelve un **token** JWT, que se debe incluir en las solicitudes subsecuentes.
-- Este token se pasa en la cabecera de las solicitudes como `Authorization: Bearer {token}`.
+### Respuestas estandarizadas
 
-### Respuestas Estandarizadas
-
-Todas las respuestas de la API siguen un formato estandarizado para facilitar el manejo en el frontend y garantizar una comunicación clara con el cliente. Un ejemplo de respuesta es el siguiente:
+Las respuestas de la API siguen un formato estandarizado para facilitar la integración con el frontend. Ejemplo de una respuesta:
 
 ```json
 {
@@ -88,10 +77,8 @@ Todas las respuestas de la API siguen un formato estandarizado para facilitar el
                 "id": 1,
                 "uuid": "2f492897-bafa-4d13-be75-e51b85f658d4",
                 "title": "Presidencia del condominio",
-                "description": null,
                 "status": "active",
-                "created_at": "2025-05-01T15:04:34.000000Z",
-                "updated_at": "2025-05-01T15:04:34.000000Z"
+                "created_at": "2025-05-01T15:04:34.000000Z"
             }
         ],
         "code": 200
@@ -153,7 +140,7 @@ php artisan key:generate
 
 ### 5. Migrar la base de datos
 
-Si estás utilizando MySQL o SQLite, ejecuta las migraciones para crear las tablas necesarias en la base de datos:
+Si estás utilizando MySQL, ejecuta las migraciones para crear las tablas necesarias en la base de datos:
 
 ```bash
 php artisan migrate
