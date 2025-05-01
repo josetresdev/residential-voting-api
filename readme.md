@@ -54,7 +54,8 @@ $questions = DB::table('questions')
     ->where('status', 'active')
     ->where('created_at', '>', '2025-01-01')
     ->get();
-  
+```
+
 ### Middleware y autenticación
 
 El sistema usa **JWT-Auth** con **Bearer Token** para la autenticación. Las rutas protegidas requieren un token válido en los encabezados HTTP. El middleware `auth:api` asegura que solo los usuarios autenticados puedan acceder a ellas.
