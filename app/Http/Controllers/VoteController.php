@@ -21,11 +21,10 @@ class VoteController extends Controller
 
     public function store(Request $request)
     {
-        // Validación ajustada para 'voting_session_id' y otros campos
         $data = $request->validate([
             'user_id' => 'required|exists:users,id',
             'option_id' => 'required|exists:options,id',
-            'voting_session_id' => 'required|exists:voting_sessions,id', // Corregido aquí
+            'voting_session_id' => 'required|exists:voting_sessions,id',
         ]);
     
         return $this->voteService->store($data);
@@ -38,11 +37,10 @@ class VoteController extends Controller
 
     public function update(Request $request, string $id)
     {
-        // Validación ajustada para 'voting_session_id'
         $data = $request->validate([
             'user_id' => 'sometimes|exists:users,id',
             'option_id' => 'sometimes|exists:options,id',
-            'voting_session_id' => 'sometimes|exists:voting_sessions,id', // Corregido aquí
+            'voting_session_id' => 'sometimes|exists:voting_sessions,id',
         ]);
 
         return $this->voteService->update($id, $data);

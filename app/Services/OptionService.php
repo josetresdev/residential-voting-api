@@ -20,7 +20,7 @@ class OptionService
     public function index()
     {
         $query = Option::with(['question', 'createdBy', 'updatedBy'])
-                       ->orderByDesc('created_at');
+                    ->orderByDesc('created_at');
 
         $options = Pagination::paginate($query);
 

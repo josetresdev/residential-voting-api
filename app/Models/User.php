@@ -2,15 +2,15 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Notifications\Notifiable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Tymon\JWTAuth\Contracts\JWTSubject;
 
-class User extends Model
+class User extends Authenticatable implements JWTSubject
 {
-    use HasFactory, SoftDeletes;
-
-    protected $table = 'users';
+    use HasFactory, SoftDeletes, Notifiable;
 
     protected $fillable = [
         'uuid',
@@ -20,6 +20,8 @@ class User extends Model
         'apartment_number',
     ];
 
+    protected $hidden = ['password'];
+
     protected $casts = [
         'uuid' => 'string',
         'created_at' => 'datetime',
@@ -27,18 +29,33 @@ class User extends Model
         'deleted_at' => 'datetime',
     ];
 
+    public function getJWTIdentifier()
+    {
+        return $this->getKey();
+    }
+
+    public function getJWTCustomClaims(): array
+    {
+        return [];
+    }
+
     public function roles()
     {
-        return $this->belongsToMany(Role::class, 'user_roles');
+        return $this->belongsToMany(Role::class, 'role_user');
     }
 
-    public function votingSessions()
+    public function hasRole($role)
     {
-        return $this->hasMany(VotingSession::class);
+        return $this->roles->contains('name', $role);
     }
 
-    public function questions()
+    public function assignRole($role)
     {
-        return $this->hasMany(Question::class, 'created_by');
+        return $this->roles()->attach($role);
+    }
+
+    public function removeRole($role)
+    {
+        return $this->roles()->detach($role);
     }
 }

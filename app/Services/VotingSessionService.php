@@ -17,9 +17,6 @@ class VotingSessionService
         $this->apiResponse = $apiResponse;
     }
 
-    /**
-     * Obtener todas las sesiones de votación con paginación.
-     */
     public function index()
     {
         $query = VotingSession::orderByDesc('created_at');
@@ -27,29 +24,17 @@ class VotingSessionService
         return $this->apiResponse->success($votingSessions);
     }
 
-    /**
-     * Almacenar una nueva sesión de votación.
-     */
     public function store(array $data)
     {
         return DB::transaction(function () use ($data) {
-            // Crear un UUID único para la sesión de votación
             $data['uuid'] = Str::uuid()->toString();
 
-            // Crear la sesión de votación en la base de datos
             $votingSession = VotingSession::create($data);
 
-            // Si en algún futuro se requieren relaciones adicionales, agregarla aquí
-            // Por ejemplo, si hay relaciones con usuarios o configuraciones adicionales.
-            
-            // Retornar respuesta con el objeto creado
             return $this->apiResponse->success($votingSession, 'Voting session created successfully', 201);
         });
     }
 
-    /**
-     * Mostrar la sesión de votación especificada.
-     */
     public function show($id)
     {
         $votingSession = VotingSession::find($id);
@@ -61,24 +46,17 @@ class VotingSessionService
         return $this->apiResponse->success($votingSession);
     }
 
-    /**
-     * Actualizar la sesión de votación especificada.
-     */
     public function update($id, array $data)
     {
         return DB::transaction(function () use ($id, $data) {
             $votingSession = VotingSession::findOrFail($id);
 
-            // Actualizar los datos de la sesión de votación
             $votingSession->update($data);
 
             return $this->apiResponse->success($votingSession, 'Voting session updated successfully');
         });
     }
 
-    /**
-     * Eliminar la sesión de votación especificada.
-     */
     public function destroy($id)
     {
         return DB::transaction(function () use ($id) {

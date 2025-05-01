@@ -27,7 +27,6 @@ class Option extends Model
         'restored_at' => 'datetime',
     ];
 
-    // Relaciones
     public function question()
     {
         return $this->belongsTo(Question::class);

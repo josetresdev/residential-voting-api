@@ -1,21 +1,19 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\AuthController;
 
-// Users
-Route::apiResource('users', App\Http\Controllers\UserController::class);
+Route::post('register', [AuthController::class, 'register']);
+Route::post('login', [AuthController::class, 'login']);
 
-// Roles
-Route::apiResource('roles', App\Http\Controllers\RoleController::class);
+Route::middleware(['jwt.auth'])->group(function () {
+    Route::post('logout', [AuthController::class, 'logout']);
+    Route::get('user', [AuthController::class, 'user']);
 
-// Voting Sessions
-Route::apiResource('voting-sessions', App\Http\Controllers\VotingSessionController::class);
-
-// Questions
-Route::apiResource('questions', App\Http\Controllers\QuestionController::class);
-
-// Options
-Route::apiResource('options', App\Http\Controllers\OptionController::class);
-
-// Votes
-Route::apiResource('votes', App\Http\Controllers\VoteController::class);
+    Route::apiResource('users', App\Http\Controllers\UserController::class);
+    Route::apiResource('roles', App\Http\Controllers\RoleController::class);
+    Route::apiResource('voting-sessions', App\Http\Controllers\VotingSessionController::class);
+    Route::apiResource('questions', App\Http\Controllers\QuestionController::class);
+    Route::apiResource('options', App\Http\Controllers\OptionController::class);
+    Route::apiResource('votes', App\Http\Controllers\VoteController::class);
+});

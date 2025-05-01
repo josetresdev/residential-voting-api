@@ -12,14 +12,14 @@ return new class extends Migration
             $table->id()->unsigned();
             $table->char('uuid', 36)->unique();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('voting_session_id'); // Cambié de 'question_id' a 'voting_session_id'
+            $table->unsignedBigInteger('voting_session_id');
             $table->unsignedBigInteger('option_id');
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
-            $table->foreign('voting_session_id')->references('id')->on('voting_sessions')->onDelete('cascade'); // Cambio aquí
+            $table->foreign('voting_session_id')->references('id')->on('voting_sessions')->onDelete('cascade');
             $table->foreign('option_id')->references('id')->on('options')->onDelete('cascade');
             $table->timestamp('deleted_at')->nullable()->default(null);
             $table->timestamps(0);
-            $table->unique(['user_id', 'voting_session_id'], 'unique_vote'); // Actualizado a 'voting_session_id'
+            $table->unique(['user_id', 'voting_session_id'], 'unique_vote');
         });
     }
 

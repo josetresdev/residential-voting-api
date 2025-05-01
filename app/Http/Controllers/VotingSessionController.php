@@ -14,17 +14,11 @@ class VotingSessionController extends Controller
         $this->votingSessionService = $votingSessionService;
     }
 
-    /**
-     * Obtener todas las sesiones de votación.
-     */
     public function index()
     {
         return $this->votingSessionService->index();
     }
 
-    /**
-     * Almacenar una nueva sesión de votación.
-     */
     public function store(Request $request)
     {
         $data = $request->validate([
@@ -36,17 +30,11 @@ class VotingSessionController extends Controller
         return $this->votingSessionService->store($data);
     }
 
-    /**
-     * Mostrar una sesión de votación específica.
-     */
     public function show(string $id)
     {
         return $this->votingSessionService->show($id);
     }
 
-    /**
-     * Actualizar una sesión de votación específica.
-     */
     public function update(Request $request, string $id)
     {
         $data = $request->validate([
@@ -58,9 +46,6 @@ class VotingSessionController extends Controller
         return $this->votingSessionService->update($id, $data);
     }
 
-    /**
-     * Eliminar una sesión de votación específica.
-     */
     public function destroy(string $id)
     {
         return $this->votingSessionService->destroy($id);
