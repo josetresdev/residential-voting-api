@@ -85,7 +85,7 @@ Las respuestas de la API siguen un formato estandarizado para facilitar la integ
         "code": 200
     }
 }
-```json
+```
 
 ## Tecnologías
 
