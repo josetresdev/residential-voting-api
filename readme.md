@@ -6,12 +6,13 @@ Este es un sistema de votaciones web destinado a propietarios de un conjunto res
 
 ## Características
 
-- **Gestión de usuarios:** Registro de propietarios y autenticación básica.
-- **Gestión de preguntas:** Creación de preguntas y opciones de votación.
-- **Sistema de votación:** Los propietarios pueden votar por una opción en cada pregunta.
-- **Resultados de votación:** Los resultados se muestran en tiempo real, con el número de votos por opción.
-- **Interfaz de administración:** Los administradores pueden gestionar preguntas, opciones y usuarios.
-- **Interfaz de usuario:** Los propietarios pueden votar de forma sencilla y ver los resultados.
+- **Gestión de usuarios:** Registro de propietarios y autenticación mediante JWT.
+- **Gestión de preguntas:** Creación, actualización y eliminación de preguntas y opciones de votación.
+- **Sistema de votación:** Los propietarios pueden emitir votos por una opción en cada pregunta.
+- **Resultados de votación:** Los resultados se actualizan en tiempo real, mostrando el número de votos por opción.
+- **Interfaz de administración (backend):** Los administradores pueden gestionar preguntas, opciones, resultados y usuarios desde el backend.
+- **Protección de rutas:** Acceso restringido a las funcionalidades mediante autenticación con Bearer tokens (JWT).
+
 
 ## Arquitectura del sistema
 
